@@ -9,6 +9,21 @@ import (
 	"github.com/joe-tripodi/gator/internal/database"
 )
 
+func handlerUsers(s *state, cmd command) error {
+	users, err := s.db.GetUsers(context.Background())
+	if err != nil {
+		return fmt.Errorf("failed to get all users: %w", err)
+	}
+	for _, user := range users {
+		if user.Name == s.cfg.CurrentUserName {
+			fmt.Println(" *", user.Name, "(current)")
+			continue
+		}
+		fmt.Println(" *", user.Name)
+	}
+	return nil
+}
+
 func handlerRegister(s *state, cmd command) error {
 	if len(cmd.Args) != 1 {
 		return fmt.Errorf("usage: %v <name>", cmd.Name)
