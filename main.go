@@ -11,8 +11,8 @@ import (
 )
 
 type state struct {
-	cfg *config.Config
 	db  *database.Queries
+	cfg *config.Config
 }
 
 func main() {
@@ -21,23 +21,21 @@ func main() {
 		log.Fatalf("error reading config: %v", err)
 	}
 
-	programState := &state{
-		cfg: &cfg,
-	}
-
 	db, err := sql.Open("postgres", cfg.DbUrl)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error connecting to db: %v", err)
 	}
 	defer db.Close()
-
 	dbQueries := database.New(db)
-	programState.db = dbQueries
+
+	programState := &state{
+		db:  dbQueries,
+		cfg: &cfg,
+	}
 
 	cmds := commands{
 		registeredCommands: make(map[string]func(*state, command) error),
 	}
-
 	cmds.register("login", handlerLogin)
 	cmds.register("register", handlerRegister)
 
