@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 const (
@@ -16,12 +17,12 @@ type Config struct {
 }
 
 func getConfigFilePath() (string, error) {
-	filepath, err := os.UserHomeDir()
+	home, err := os.UserHomeDir()
 	if err != nil {
 		return "", err
 	}
-	filepath += "/" + configFileName
-	return filepath, nil
+	fullPath := filepath.Join(home, configFileName)
+	return fullPath, nil
 }
 
 func Read() (Config, error) {
@@ -45,23 +46,28 @@ func Read() (Config, error) {
 	return config, nil
 }
 
-func (cfg *Config) SetUser(user string) error {
-	cfg.CurrentUserName = user
+func (cfg *Config) SetUser(userName string) error {
+	cfg.CurrentUserName = userName
 	return write(*cfg)
 }
 
 func write(cfg Config) error {
-	filepath, err := getConfigFilePath()
+	fullPath, err := getConfigFilePath()
 	if err != nil {
 		return err
 	}
-	dat, err := json.Marshal(cfg)
+
+	file, err := os.Create(fullPath)
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile(filepath, dat, 'w')
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	err = encoder.Encode(cfg)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
