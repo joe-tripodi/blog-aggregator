@@ -45,8 +45,8 @@ func handlerRegister(s *state, cmd command) error {
 
 	user := database.CreateUserParams{
 		Name:      name,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
 		ID:        uuid.New(),
 	}
 
