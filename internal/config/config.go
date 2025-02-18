@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -40,9 +39,6 @@ func Read() (Config, error) {
 	if err != nil {
 		return config, err
 	}
-	fmt.Println(filepath)
-	fmt.Println(dat)
-	fmt.Println(config)
 	return config, nil
 }
 
