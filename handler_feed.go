@@ -67,6 +67,21 @@ func handlerAddFeed(s *state, cmd command) error {
 
 	printFeed(rssFeed, user)
 
+	// now we need to create a feed follow
+	// I could do this by updating the query OR I do this here
+	feedFollow := database.CreateFeedFollowsParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+		UserID:    user.ID,
+		FeedID:    rssFeed.ID,
+	}
+
+	_, err = s.db.CreateFeedFollows(context.Background(), feedFollow)
+	if err != nil {
+		return fmt.Errorf("unable to create feed follow: %w", err)
+	}
+
 	return nil
 }
 
