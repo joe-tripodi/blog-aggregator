@@ -15,6 +15,21 @@ type state struct {
 	cfg *config.Config
 }
 
+const usage_str = `
+Usage: cli <command> [args...]
+List of commands:
+  login <username>
+  register <username>
+  reset
+  users
+  agg
+  addfeed <name> <feed_url>
+  feeds
+  follow <feed_url>
+  following
+  unfollow <feed_url>
+`
+
 func main() {
 	cfg, err := config.Read()
 	if err != nil {
@@ -49,7 +64,7 @@ func main() {
 	cmds.register("unfollow", middlewareLoggedIn(handlerUnfollow))
 
 	if len(os.Args) < 2 {
-		log.Fatal("Usage: cli <command> [args...]")
+		log.Fatal(usage_str)
 		return
 	}
 

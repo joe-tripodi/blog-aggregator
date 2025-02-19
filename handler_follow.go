@@ -14,10 +14,10 @@ func handlerFollowing(s *state, cmd command, user database.User) error {
 	if err != nil {
 		return fmt.Errorf("failed to get follows for user: %w", err)
 	}
-	fmt.Println(following)
 
+	fmt.Println("Following:")
 	for _, follow := range following {
-		printFollow(follow)
+		fmt.Println("  *", follow.FeedName)
 	}
 	return nil
 }
