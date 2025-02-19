@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/joe-tripodi/gator/internal/database"
 )
 
@@ -37,7 +38,25 @@ func scrapeFeeds(s *state) error {
 
 	fmt.Printf("Feed: %+v\n", rssFeed.Channel.Title)
 	for _, item := range rssFeed.Channel.Item {
-		fmt.Println(item.Title)
+		pubDate, _ := time.Parse(time.RFC1123Z, item.PubDate)
+
+		post, err := s.db.CreatePost(context.Background(), database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   time.Now().UTC(),
+			UpdatedAt:   time.Now().UTC(),
+			Title:       item.Title,
+			Url:         item.Link,
+			PublishedAt: pubDate,
+			Description: item.Description,
+			FeedID:      nextFeed.ID,
+		})
+
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		fmt.Println("saved post:", post.Title)
 	}
 	fmt.Println("=======================================")
 
