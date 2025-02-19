@@ -34,17 +34,13 @@ func handlerFeeds(s *state, cmd command) error {
 	return nil
 }
 
-func handlerAddFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.Args) != 2 {
 		return fmt.Errorf("usage: %s <name> <url>", cmd.Name)
 	}
 
 	name := cmd.Args[0]
 	url := cmd.Args[1]
-	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("unable to get current user: %w", err)
-	}
 
 	feed := database.CreateFeedParams{
 		ID:        uuid.New(),
@@ -58,11 +54,6 @@ func handlerAddFeed(s *state, cmd command) error {
 	rssFeed, err := s.db.CreateFeed(context.Background(), feed)
 	if err != nil {
 		return fmt.Errorf("Unable to created feed: %w", err)
-	}
-
-	user, err = s.db.GetUserById(context.Background(), feed.UserID)
-	if err != nil {
-		return fmt.Errorf("failed to get user for feed: %w", err)
 	}
 
 	printFeed(rssFeed, user)
