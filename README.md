@@ -1,5 +1,6 @@
 # Gator
 Blog aggregator
+Inspired by boot.dev
 
 ## Install
 cd blog-aggregator
